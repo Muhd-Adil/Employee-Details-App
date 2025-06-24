@@ -1,0 +1,49 @@
+{% extends 'base.html' %} 
+
+{% block title %}Our Team{% endblock %}
+
+{% block style %}
+    <style>
+        .update-btn{
+            background-color: rgb(0, 85, 255);
+            color: white;
+            padding: 5px 10px;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+  <h1 class="mb-4">Employees List</h1>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Address</th>
+        <th>Department</th>
+        <th>Joined On</th>
+        <th></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for emp in employees %}
+      <tr>
+        <td>{{ emp.name }}</td>
+        <td>{{ emp.email }}</td>
+        <td>{{ emp.address }}</td>
+        <td>{{ emp.department }}</td>
+        <td>{{ emp.joined_date }}</td>
+        <td><a href="{% url 'employee-edit' emp.pk %}" class="btn btn-primary">Update</a></td>
+        <td><a href="{% url 'employee-delete' emp.pk %}"  class="btn btn-danger">Delete</a></td>
+      </tr>
+    {% empty %}
+      <tr>
+        <td colspan="4" class="text-center">No employees found.</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+
+  <a href="{% url 'employee-register' %}">← Back to Register</a>
+{% endblock %}

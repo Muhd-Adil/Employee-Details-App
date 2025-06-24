@@ -1,0 +1,46 @@
+{% extends 'base.html' %} 
+
+{% block title %}
+    {% if employee %}Edit{% else %}Register{% endif %} Employee
+{% endblock %}
+
+{% block style %}
+
+{% endblock %}
+
+{% block content %}
+ <div class="containe p-4">
+    <h2>
+        {% if employee %}Edit{% else %}Register{% endif %} Employee
+    </h2>
+     <form method="POST" class="row g-3">
+      {% csrf_token %}
+      <div class="col-md-6">
+        <label class="form-label">Name</label>
+        <input name="name" type="text" class="form-control" value="{{employee.name | default:''}}" required>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Email</label>
+        <input name="email" type="email" class="form-control" value="{{employee.email | default:''}}" required>
+      </div>
+      <div class="col-12">
+        <label class="form-label">Address</label>
+        <input name="address" type="text" class="form-control" value="{{employee.address | default:''}}">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Department</label>
+        <input name="department" type="text" class="form-control" value="{{employee.department | default:''}}">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Joined Date</label>
+        <input name="joined_date" type="date" class="form-control" value="{{employee.joined_date | date:'Y-m-d'}}" required>
+      </div>
+      <div class="col-12">
+        <button type="submit" class="btn btn-primary">
+            {% if employee %}Save Changes{% else %}Add Employee{% endif %}
+        </button>
+      </div>
+    </form>
+    <footer class="mt-5" style="text-align: center;"><a href="{% url 'employee-list' %}">Go to Employees list</a></footer>
+ </div>
+{% endblock %}
