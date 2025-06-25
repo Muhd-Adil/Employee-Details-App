@@ -9,23 +9,24 @@
 {% endblock %}
 
 {% block content %}
- <div class="containe p-4">
+ <div class="container p-4">
     <h2>
         {% if employee %}Edit{% else %}Register{% endif %} Employee
     </h2>
-     <form method="POST" class="row g-3">
+    <form class="row g-3" id="emp-form"
+      {% if employee %} data-pk="{{ employee.pk }}"{% endif %}>
       {% csrf_token %}
       <div class="col-md-6">
         <label class="form-label">Name</label>
-        <input name="name" type="text" class="form-control" value="{{employee.name | default:''}}" required>
+        <input name="name" type="text" class="form-control" value="{{employee.name | default:''}}" required >
       </div>
       <div class="col-md-6">
         <label class="form-label">Email</label>
-        <input name="email" type="email" class="form-control" value="{{employee.email | default:''}}" required>
+        <input name="email" type="email" class="form-control" value="{{employee.email | default:''}}" required >
       </div>
       <div class="col-12">
         <label class="form-label">Address</label>
-        <input name="address" type="text" class="form-control" value="{{employee.address | default:''}}">
+        <input name="address" type="text" class="form-control" value="{{employee.address | default:''}}" required>
       </div>
       <div class="col-md-6">
         <label class="form-label">Department</label>
@@ -43,4 +44,48 @@
     </form>
     <footer class="mt-5" style="text-align: center;"><a href="{% url 'employee-list' %}">Go to Employees list</a></footer>
  </div>
+{% endblock %}
+{% block script %}
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const form = document.getElementById('emp-form');
+      if (!form) return;
+
+      form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const csrftoken = form.querySelector('[name=csrfmiddlewaretoken]').value;
+        const data = Object.fromEntries(new FormData(form).entries());
+
+        // Default to create
+        let url    = '/api/employees/';
+        let method = 'POST';
+
+        // If data-pk attribute exists, switch to update mode
+        const pk = form.getAttribute('data-pk');
+        if (pk) {
+          url    += pk + '/';
+          method = 'PUT';
+        }
+
+        const res = await fetch(url, {
+          method,
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrftoken,
+            'Accept': 'application/json',
+          },
+          body: JSON.stringify(data),
+        });
+
+        if (res.ok) {
+          window.location.href = '/api/employees/';
+        } else {
+          const err = await res.json();
+          alert('Save failed: ' + JSON.stringify(err));
+        }
+      });
+    });
+  </script>
+  
 {% endblock %}

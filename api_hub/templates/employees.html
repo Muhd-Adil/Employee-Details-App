@@ -34,8 +34,12 @@
         <td>{{ emp.address }}</td>
         <td>{{ emp.department }}</td>
         <td>{{ emp.joined_date }}</td>
-        <td><a href="{% url 'employee-edit' emp.pk %}" class="btn btn-primary">Update</a></td>
-        <td><a href="{% url 'employee-delete' emp.pk %}"  class="btn btn-danger">Delete</a></td>
+        <td><a href="/api/employees/{{ emp.pk }}/" class="btn btn-primary">Update</a></td>
+        <td>
+            <button class="btn btn-sm btn-danger" onclick="deleteEmp('{{ emp.pk }}')">
+              Delete
+            </button>
+        </td>
       </tr>
     {% empty %}
       <tr>
@@ -46,4 +50,25 @@
   </table>
 
   <a href="{% url 'employee-register' %}">← Back to Register</a>
+{% endblock %}
+
+{% block script %}
+<script>
+    async function deleteEmp(pk) {
+      if (!confirm('Delete this employee?')) return;
+      const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+      const res = await fetch(`/api/employees/${pk}/`, {
+        method: 'DELETE',
+         headers: {
+        'X-CSRFToken': csrftoken,
+        'Accept': 'application/json',      
+      }
+      });
+      if (res.ok) {
+        location.reload();
+      } else {
+        alert('Failed to delete.');
+      }
+    }
+  </script>
 {% endblock %}
